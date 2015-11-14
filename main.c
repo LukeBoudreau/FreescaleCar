@@ -11,8 +11,8 @@
 #include "uart.h"
 #include "PWM.h"
 
-void initialize();
-void en_interrupts();
+void initialize(void);
+void en_interrupts(void);
 void delay();
 
 int main(void)
@@ -29,9 +29,14 @@ int main(void)
 	SetMotorDutyCycle(50 ,0);
 	SetServoDutyCycle(10);
 	
-	for(;;) ;  //then loop forever
-	
-
+	for(;;){  //then loop forever
+	int i;
+	SetServoDutyCycle(10);
+	for(i=0; i<10000; i++);
+	SetServoDutyCycle(15);
+	for(i=0; i<10000; i++);
+	SetServoDutyCycle(20);
+	}
 //	for(;;)  //loop forever
 //	{
 //		uint16_t dc = 0;

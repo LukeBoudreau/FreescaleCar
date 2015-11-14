@@ -16,7 +16,7 @@
 #define PWM_FREQUENCY			10000
 #define SERVO_FREQUENCY   10000
 #define FTM0_MOD_VALUE			(CLOCK/PWM_FREQUENCY)
-#define FTM3_MOD_VALUE      (CLOCK/SERVO_FREQUENCY)
+#define FTM3_MOD_VALUE      (CLOCK/(SERVO_FREQUENCY/4))
 
 static volatile unsigned int PWMTick = 0;
 static volatile unsigned int PWMTick2 = 0;
@@ -47,13 +47,13 @@ void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight)
 void SetServoDutyCycle(unsigned int DutyCycle)
 {
 	// Calculate the new cutoff value
-	uint16_t mod = (uint16_t) (((CLOCK/SERVO_FREQUENCY) * DutyCycle) / 100);
+	uint16_t mod = (uint16_t) (((CLOCK/(SERVO_FREQUENCY/4)) * DutyCycle) / 100);
 	
 	// Set output
 	FTM3_C4V = mod;
 	
 	// Update the clock to the new frequency
-	FTM3_MOD = (CLOCK/PWM_FREQUENCY);
+	FTM3_MOD = (CLOCK/(SERVO_FREQUENCY/4));
 }
 
 /*
