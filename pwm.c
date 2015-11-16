@@ -14,9 +14,9 @@
 #define DEFAULT_SYSTEM_CLOCK 20485760u /* Default System clock value */
 #define CLOCK					20485760u
 #define PWM_FREQUENCY			10000
-#define SERVO_FREQUENCY   10000
+#define SERVO_FREQUENCY   6400
 #define FTM0_MOD_VALUE			(CLOCK/PWM_FREQUENCY)
-#define FTM3_MOD_VALUE      (CLOCK/(SERVO_FREQUENCY/4))
+#define FTM3_MOD_VALUE      (CLOCK/SERVO_FREQUENCY)
 
 static volatile unsigned int PWMTick = 0;
 static volatile unsigned int PWMTick2 = 0;
@@ -26,18 +26,33 @@ static volatile unsigned int PWMTick2 = 0;
  * Change the Motor Duty Cycle and Frequency
  * @param DutyCycle (0 to 100)
  * @param Frequency (~1000 Hz to 20000 Hz)
- * @param dir: 1 for C3 active, else C2 active 
+ * @param dir: 1 for forward, else backwards 
  */
-void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight)
+void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight, int dir)
 {
 	// Calculate the new cutoff value
 	uint16_t mod = (uint16_t) (((CLOCK/PWM_FREQUENCY) * DutyCycle) / 100);
 	
 	// Set outputs
 	if( motorRight ){
-		FTM0_C3V = mod;
-	} else {
-		FTM0_C2V = mod;
+		if(dir){
+			FTM0_C2V = mod;
+			FTM0_C5V = 0;
+		} 
+		else {
+			FTM0_C5V = mod;
+			FTM0_C2V = 0;
+		}
+	}
+	else{
+		if(dir){
+			FTM0_C3V = mod; 
+			FTM0_C6V = 0;
+		}
+		else{
+			FTM0_C6V = mod;
+			FTM0_C3V = 0;
+		}
 	}
 
 	// Update the clock to the new frequency
@@ -47,13 +62,13 @@ void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight)
 void SetServoDutyCycle(unsigned int DutyCycle)
 {
 	// Calculate the new cutoff value
-	uint16_t mod = (uint16_t) (((CLOCK/(SERVO_FREQUENCY/4)) * DutyCycle) / 100);
+	uint16_t mod = (uint16_t) (((CLOCK/SERVO_FREQUENCY) * DutyCycle) / 100);
 	
 	// Set output
 	FTM3_C4V = mod;
 	
 	// Update the clock to the new frequency
-	FTM3_MOD = (CLOCK/(SERVO_FREQUENCY/4));
+	FTM3_MOD = (CLOCK/SERVO_FREQUENCY);
 }
 
 /*
@@ -73,7 +88,9 @@ void InitPWM(void)
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
     PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch2
     PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch3
-		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; 
+	  PORTA_PCR0  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch5
+	  PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch6
+		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch4
 	// 39.3.10 Disable Write Protection
 	FTM0_MODE |= FTM_MODE_WPDIS_MASK;
 	FTM3_MODE |= FTM_MODE_WPDIS_MASK;
@@ -101,6 +118,12 @@ void InitPWM(void)
 	// See Table 39-67,  Edge-aligned PWM, Low-true pulses (clear out on match)
 	FTM0_C2SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
 	FTM0_C2SC &= ~FTM_CnSC_ELSA_MASK;
+	
+	FTM0_C5SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
+	FTM0_C5SC &= ~FTM_CnSC_ELSA_MASK;
+	
+	FTM0_C6SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
+	FTM0_C6SC &= ~FTM_CnSC_ELSA_MASK;
 	
 	// Use Channel 4 on FTM3, goes to PTC8
 	FTM3_C4SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
