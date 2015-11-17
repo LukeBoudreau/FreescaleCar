@@ -25,8 +25,7 @@ static volatile unsigned int PWMTick2 = 0;
 /*
  * Change the Motor Duty Cycle and Frequency
  * @param DutyCycle (0 to 100)
- * @param Frequency (~1000 Hz to 20000 Hz)
- * @param dir: 1 for C3 active, else C2 active 
+ * @param motorRight 0 for Right motor, 1 for Left motor
  */
 void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight)
 {
@@ -44,6 +43,10 @@ void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight)
 	FTM0_MOD = (CLOCK/PWM_FREQUENCY);
 }
 
+/*
+ * Change the Servo Duty Cycle
+ * @param DutyCycle (10 to 20, 15 means steer straight)
+ */
 void SetServoDutyCycle(unsigned int DutyCycle)
 {
 	// Calculate the new cutoff value
