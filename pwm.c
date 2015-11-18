@@ -28,20 +28,20 @@ static volatile unsigned int PWMTick2 = 0;
  * @param motorRight 0 for Right motor, 1 for Left motor
  * @param dir: 1 for forward, else backwards 
  */
-void SetMotorDutyCycle(unsigned int DutyCycle, int motorRight, int dir)
+void SetMotorDutyCycle(unsigned int DutyCycle, int motorLeft, int dir)
 {
 	// Calculate the new cutoff value
 	uint16_t mod = (uint16_t) (((CLOCK/PWM_FREQUENCY) * DutyCycle) / 100);
 	
 	// Set outputs
-	if( motorRight ){
+	if( motorLeft ){
 		if(dir){
-			FTM0_C2V = mod;
-			FTM0_C5V = 0;
+			FTM0_C2V = 0;
+			FTM0_C5V = mod;
 		} 
 		else {
-			FTM0_C5V = mod;
-			FTM0_C2V = 0;
+			FTM0_C5V = 0;
+			FTM0_C2V = mod;
 		}
 	}
 	else{
@@ -90,11 +90,12 @@ void InitPWM(void)
 	// 11.4.1 Route the output of TPM channel 0 to the pins
 	// Use drive strength enable flag to high drive strength
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
-    PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch2
-    PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //Ch3
-	  PORTA_PCR0  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch5
-	  PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch6
-		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //Ch4
+    PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch2
+    PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch3
+	  PORTA_PCR0  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch5
+	  PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch6
+		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM3 Ch4
+	
 	// 39.3.10 Disable Write Protection
 	FTM0_MODE |= FTM_MODE_WPDIS_MASK;
 	FTM3_MODE |= FTM_MODE_WPDIS_MASK;

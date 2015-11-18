@@ -25,9 +25,9 @@ int main(void)
 	put("Running... \n\r");
 	
 	//Generate 20% duty cycle at 10kHz
-	SetMotorDutyCycle(50, 1, 1);
+	SetMotorDutyCycle(50, 1, 0);
 	SetMotorDutyCycle(50, 0, 1);
-	SetServoDutyCycle(10);
+	SetServoDutyCycle(5);
 	
 	for(;;);  //then loop forever
 
