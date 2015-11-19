@@ -37,10 +37,10 @@ void SetMotorDutyCycle(unsigned int DutyCycle, int motorLeft, int dir)
 	if( motorLeft ){
 		if(dir){
 			FTM0_C2V = 0;
-			FTM0_C5V = mod;
+			FTM0_C7V = mod;
 		} 
 		else {
-			FTM0_C5V = 0;
+			FTM0_C7V = 0;
 			FTM0_C2V = mod;
 		}
 	}
@@ -92,7 +92,7 @@ void InitPWM(void)
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
     PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch2
     PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch3
-	  PORTA_PCR0  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch5
+	  PORTA_PCR2  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch7
 	  PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch6
 		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM3 Ch4
 	
@@ -124,8 +124,8 @@ void InitPWM(void)
 	FTM0_C2SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
 	FTM0_C2SC &= ~FTM_CnSC_ELSA_MASK;
 	
-	FTM0_C5SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
-	FTM0_C5SC &= ~FTM_CnSC_ELSA_MASK;
+	FTM0_C7SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
+	FTM0_C7SC &= ~FTM_CnSC_ELSA_MASK;
 	
 	FTM0_C6SC |= FTM_CnSC_MSB_MASK | FTM_CnSC_ELSB_MASK;
 	FTM0_C6SC &= ~FTM_CnSC_ELSA_MASK;
