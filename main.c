@@ -10,6 +10,7 @@
 #include "MK64F12.h"
 #include "uart.h"
 #include "PWM.h"
+#include "camera.h"
 
 void initialize(void);
 void en_interrupts(void);
@@ -87,4 +88,7 @@ void initialize()
 	
 	// Initialize the FlexTimer
 	InitPWM();
+	
+	//everything else
+	CAM_INIT();
 }
