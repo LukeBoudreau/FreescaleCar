@@ -1,7 +1,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-void CameraRead(void);
+unsigned short CameraRead(void);
 void GPIO_INIT(void);
 void PIT_INIT(void);
 void PDB_INIT(void);

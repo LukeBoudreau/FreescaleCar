@@ -26,11 +26,15 @@ int main(void)
 	put("Running... \n\r");
 	
 	//Generate 20% duty cycle at 10kHz
-	SetMotorDutyCycle(50, 1, 1);
-	SetMotorDutyCycle(50, 0, 1);
+	//SetMotorDutyCycle(50, 1, 1);
+	//SetMotorDutyCycle(50, 0, 1);
 	SetServoDutyCycle(5);
 	
-	for(;;);  //then loop forever
+	for(;;)  //then loop forever
+  {
+    //unsigned short i;
+    //i = CameraRead();
+  }
 
 //	for(;;)  //loop forever
 //	{

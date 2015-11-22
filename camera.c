@@ -18,16 +18,20 @@
 
 static volatile unsigned int SI_TICKER = 0;
 
-void CameraRead()
+unsigned short CameraRead(void)
 {
 	// do stuff - such help...
+  ADC0_SC1A = 26 & ADC_SC1_ADCH_MASK;      //Write to SC1A to start conversion
+  while(ADC0_SC2 & ADC_SC2_ADACT_MASK);    //Conversion is in progress
+  while(!(ADC0_SC1A & ADC_SC1_COCO_MASK)); //Until conversion complete
+  return ADC0_RA;
 }
 
 void CAM_INIT(void){
 	GPIO_INIT();
 	PIT_INIT();
 	PDB_INIT();
-	ADC1_INIT();
+	//ADC1_INIT();
 }
 
 void GPIO_INIT(void){
@@ -60,8 +64,6 @@ void PIT_INIT(void) {
 	// Enable PIT interrupt in the interrupt controller
 	NVIC_EnableIRQ(PIT0_IRQn);
 	
-	for(;;){ // ever
-	}
 }
  
 void PDB_INIT(void) {
@@ -102,17 +104,17 @@ void ADC1_INIT(void) {
     // Select hardware trigger.
     ADC1_SC2 |= 0x00000000;
  
- 
     // Configure SC1A register.
     // Select ADC Channel and enable interrupts. Use ADC1 channel DAD3  in single ended mode.
     ADC1_SC1A = 0x00000043;
  
  
     // Enable NVIC interrupt
-    NVIC_EnableIRQ(ADC1_IRQn);//ADC1 Interrupt
+    //NVIC_EnableIRQ(ADC1_IRQn);//ADC1 Interrupt
 }
  
 // ADC1 Conversion Complete ISR
+/*
 void ADC1_IRQHandler(void) {
     // Read the result (upper 12-bits). This also clears the Conversion complete flag.
     unsigned short i = ADC1_RA >> 4;
@@ -122,28 +124,34 @@ void ADC1_IRQHandler(void) {
     DAC0_DAT0L = (char)(i & 0x00FF);    //set low 8 bits
     DAC0_DAT0H = (char)(i >> 8);    //set high 4 bits
 }
+*/
 
 void PIT0_IRQHandler(void){
-	if (SI_TICKER <= 265)
+	if (SI_TICKER <= 267)
 	{
 		SI_TICKER++;
 	}
-	else if( SI_TICKER == 266)
+	else if( SI_TICKER == 268)
 	{
 		//go high
 		PTB->PSOR = (1 << 2);
 		SI_TICKER++;
 	}
+  else if ( SI_TICKER == 269)
+  {
+    // do nothing
+    SI_TICKER++;
+  }
 	else
 	{
 		//go low
 		PTB->PCOR = (1 << 2);
 		SI_TICKER = 0;
 	}
-	
+
 	// Clear interrupt
 	PIT_TFLG0 |= PIT_TFLG_TIF_MASK;
-	// Toggle LED
+	// clock
 	PTB->PTOR = (1 << 9);
 	return;
 }
