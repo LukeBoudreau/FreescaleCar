@@ -20,7 +20,7 @@ static volatile unsigned int SI_TICKER = 0;
 
 unsigned short CameraRead(void)
 {
-	// do stuff - such help...
+	
   ADC0_SC1A = 26 & ADC_SC1_ADCH_MASK;      //Write to SC1A to start conversion
   while(ADC0_SC2 & ADC_SC2_ADACT_MASK);    //Conversion is in progress
   while(!(ADC0_SC1A & ADC_SC1_COCO_MASK)); //Until conversion complete
@@ -53,7 +53,7 @@ void PIT_INIT(void) {
 	// PIT clock frequency is the system clock
 	// Load the value that the timer will count down from
 	//PIT_LDVAL0 = 0x01389680; // about 1 second
-	PIT_LDVAL0 = DEFAULT_SYSTEM_CLOCK/20486; // about 1 second
+	PIT_LDVAL0 = DEFAULT_SYSTEM_CLOCK/204857; // about 10 microsecond
 	// Enable timer interrupts
 	PIT_TCTRL0 |= PIT_TCTRL_TIE_MASK;
 	// Enable the timer
@@ -127,17 +127,17 @@ void ADC1_IRQHandler(void) {
 */
 
 void PIT0_IRQHandler(void){
-	if (SI_TICKER <= 267)
+	if (SI_TICKER <= 254)
 	{
 		SI_TICKER++;
 	}
-	else if( SI_TICKER == 268)
+	else if( SI_TICKER == 255)
 	{
 		//go high
 		PTB->PSOR = (1 << 2);
 		SI_TICKER++;
 	}
-  else if ( SI_TICKER == 269)
+  else if ( SI_TICKER == 256)
   {
     // do nothing
     SI_TICKER++;
