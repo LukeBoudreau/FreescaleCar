@@ -11,6 +11,7 @@
 #include "uart.h"
 #include "PWM.h"
 #include "camera.h"
+#include "PID.h"
 
 void initialize(void);
 void en_interrupts(void);
@@ -28,46 +29,10 @@ int main(void)
 	//Generate 20% duty cycle at 10kHz
 	//SetMotorDutyCycle(50, 1, 1);
 	//SetMotorDutyCycle(50, 0, 1);
-	SetServoDutyCycle(5);
-	
-	for(;;)  //then loop forever
-  {
-    //unsigned short i;
-    //i = CameraRead();
-  }
+	SetServoDutyCycle(7.85);
+	init_camera();
+	PID_LOOP();
 
-//	for(;;)  //loop forever
-//	{
-//		uint16_t dc = 0;
-//		uint16_t freq = 10000; /* Frequency = 10 kHz */
-//		uint16_t dir = 0;
-//		char c = 48;
-//		int i=0;
-//		
-//		// 0 to 100% duty cycle in forward direction
-//		for (i=0; i<100; i++){
-//			SetDutyCycle(i, 10000, 1);
-//			delay(10);
-//		}
-//		
-//		// 100% down to 0% duty cycle in the forward direction
-//		for (i=100; i>=0; i--){
-//			SetDutyCycle(i, 10000, 1);
-//			delay(10);
-//		}
-//		
-//		// 0 to 100% duty cycle in reverse direction
-//		for (i=0; i<100; i++){
-//			SetDutyCycle(i, 10000, 0);
-//			delay(10);
-//		}
-//		
-//		// 100% down to 0% duty cycle in the reverse direction
-//		for (i=100; i>=0; i--){
-//			SetDutyCycle(i, 10000, 0);
-//			delay(10);
-//		}
-//	}
 
 	return 0;
 }
@@ -94,5 +59,5 @@ void initialize()
 	InitPWM();
 	
 	//everything else
-	CAM_INIT();
+	//CAM_INIT();
 }

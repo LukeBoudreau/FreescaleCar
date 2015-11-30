@@ -61,9 +61,9 @@ void SetMotorDutyCycle(unsigned int DutyCycle, int motorLeft, int dir)
 
 /*
  * Change the Servo Duty Cycle
- * @param DutyCycle (10 to 20, 15 means steer straight)
+ * @param DutyCycle (6.25 (left) to 9.5 (right),  7.85 means steer straight)
  */
-void SetServoDutyCycle(unsigned int DutyCycle)
+void SetServoDutyCycle(double DutyCycle)
 {
 	// Calculate the new cutoff value
 	uint16_t mod = (uint16_t) (((CLOCK/SERVO_FREQUENCY) * DutyCycle) / 100);
