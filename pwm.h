@@ -3,7 +3,7 @@
 
 void SetMotorDutyCycle(unsigned int DutyCycle, int motorLeft, int dir);
 void SetServoDutyCycle(double DutyCycle);
-void InitPWM();
-void PWM_ISR();
+void InitPWM(void);
+void PWM_ISR(void);
 
 #endif /* PWM_H_ */

@@ -61,14 +61,48 @@ char str[10];
 
 // ADC0VAL holds the current ADC value
 uint16_t ADC0VAL;
+// Sections is an abreviated version of "link"
+uint16_t sections[5];
 
-uint16_t * getPosition(void){
-	return &line[0];
+// This function gets the position and splits it up
+// into 5 sections.
+
+//	|FarLeft|left|center|right|farRight|
+uint16_t * getPos(void){
+	int i;
+	// Initialize
+	sections[0] = 0;
+	sections[1] = 0;
+	sections[2] = 0;
+	sections[3] = 0;
+	sections[4] = 0;
+	
+	//Add up values
+	for(i=0;i<=27;i++){
+		if( i <= 24 ){
+			sections[0] += line[i];
+			sections[1] += line[i];
+			sections[3] += line[i];
+			sections[4] += line[i];
+		}
+		//center
+		sections[2] += line[i];
+		
+	}
+	//divide by # of elements
+	sections[0] /= 25;
+	sections[1] /= 25;
+	sections[2] /= 28;
+	sections[3] /= 25;
+	sections[4] /= 25;
+	
+	//Return a 5 element array with "average" values
+	return &sections[0];
 }
 
-int init_camera(void)
+void init_camera(void)
 {
-	int i;
+	//int i;
 	
 	uart_init();
 	init_GPIO(); // For CLK and SI output on GPIO

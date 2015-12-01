@@ -15,7 +15,6 @@
 
 void initialize(void);
 void en_interrupts(void);
-void delay();
 
 int main(void)
 {
@@ -35,19 +34,6 @@ int main(void)
 
 
 	return 0;
-}
-
-
-/**
- * Waits for a delay (in milliseconds)
- * 
- * del - The delay in milliseconds
- */
-void delay(int del){
-	int i;
-	for (i=0; i<del*50000; i++){
-		// Do nothing
-	}
 }
 
 void initialize()

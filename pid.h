@@ -2,5 +2,6 @@
 #define PID_H_
 
 void PID_LOOP (void);
+double getError(void);
 
 #endif /* PID_H_ */
