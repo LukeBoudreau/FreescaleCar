@@ -38,7 +38,7 @@ double getError(void);
 											ki*(xError-errOld) +
 											kd*(xError-2*errOld+errOld2);
 		 
-		 ServoDutyCycle = clip(ServoDutyCycle,-40,40);
+		 //ServoDutyCycle = clip(ServoDutyCycle,-40,40);
 		 ServoDutyCycleOld = ServoDutyCycle;
 		 
 		 errOld2 = errOld;
@@ -53,8 +53,8 @@ double getError(void);
 // 
  double getError(void){
 	 double xError,xActual;
-	 xActual = getPos();
-	 xError = xCentered - xActual; //Abstract of what we want to do
+	 //xActual = getPos();
+	 //xError = xCentered - xActual; //Abstract of what we want to do
 	 
 	 return xError;
 }

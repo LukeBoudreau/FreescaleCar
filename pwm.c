@@ -75,6 +75,7 @@ void SetServoDutyCycle(double DutyCycle)
 	FTM3_MOD = (CLOCK/SERVO_FREQUENCY);
 }
 
+
 /*
  * Initialize the FlexTimer for PWM
  */

@@ -23,6 +23,7 @@
  */
 
 #include "MK64F12.h"
+#include "pwm.h"
 #include "uart.h"
 #include "stdio.h"
 
@@ -62,42 +63,84 @@ char str[10];
 // ADC0VAL holds the current ADC value
 uint16_t ADC0VAL;
 // Sections is an abreviated version of "link"
-uint16_t sections[5];
+uint16_t sections[15];
 
 // This function gets the position and splits it up
 // into 5 sections.
 
 //	|FarLeft|left|center|right|farRight|
 uint16_t * getPos(void){
-	int i;
+	int i,counter,index;
 	// Initialize
-	sections[0] = 0;
-	sections[1] = 0;
-	sections[2] = 0;
-	sections[3] = 0;
-	sections[4] = 0;
+	for(i=0;i<=14;i++){
+		sections[i] = 0;
+	}
 	
+	counter = 1;
+	index = 0;
 	//Add up values
-	for(i=0;i<=27;i++){
-		if( i <= 24 ){
-			sections[0] += line[i];
-			sections[1] += line[i];
-			sections[3] += line[i];
-			sections[4] += line[i];
+	for(i=24;i<=99;i++){
+		if(counter == 5){
+			sections[index] += line[i];
+			counter = 1;
+			index++;
+			
+		} else {
+			sections[index] += line[i];
+			counter++;
 		}
-		//center
-		sections[2] += line[i];
 		
 	}
+	
 	//divide by # of elements
-	sections[0] /= 25;
-	sections[1] /= 25;
-	sections[2] /= 28;
-	sections[3] /= 25;
-	sections[4] /= 25;
+	for(i=0;i<=14;i++){
+		sections[i] /= 5;
+		if(sections[i] >= 32768){
+			sections[i] = 1;
+		}
+		else{
+			sections[i] = 0;
+		}
+	}
 	
 	//Return a 5 element array with "average" values
 	return &sections[0];
+}
+
+void driveCar(void){
+	uint16_t *fovPos;
+	int i, turned;
+	double dir;
+	SetMotorDutyCycle(40, 1, 1);
+	SetMotorDutyCycle(40, 0, 1);
+	fovPos = getPos(); //7 is the center
+	turned = 0;
+	if(fovPos[7]==0){
+		SetServoDutyCycle(7.85);
+	}
+	else{
+		for(i = 1; i<=7; i++){
+			if(fovPos[7+i]==0){
+				dir = 7.853 + 0.236*i;
+				SetServoDutyCycle(dir);
+				turned = 1;
+				break;
+			}
+			else if(fovPos[7-i]==0){
+				dir = 7.853 - 0.229*i;
+				SetServoDutyCycle(dir);
+				turned = 1;
+				break;
+			}
+			else{
+				continue;
+			}
+		}
+		if(turned == 0){
+			SetServoDutyCycle(7.853);
+		}
+	}
+	
 }
 
 void init_camera(void)
