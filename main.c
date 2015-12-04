@@ -35,37 +35,6 @@ int main(void)
 
 	for(;;){
 		driveCar();
-//		fovPtr = getPos();	//7 is center
-//		if(fovPtr[5]==0){
-//			SetServoDutyCycle(9);
-//			SetMotorDutyCycle(40, 1, 1);
-//			SetMotorDutyCycle(40, 0, 1);
-//		}
-//		else if(fovPtr[6]==0){
-//			SetServoDutyCycle(8.5);
-//			SetMotorDutyCycle(40, 1, 1);
-//			SetMotorDutyCycle(40, 0, 1);
-//		}
-//		else if(fovPtr[7]==0){
-//			SetServoDutyCycle(7.85);
-//			SetMotorDutyCycle(40, 1, 1);
-//			SetMotorDutyCycle(40, 0, 1);
-//		}
-//		else if(fovPtr[8]==0){
-//			SetServoDutyCycle(7);
-//			SetMotorDutyCycle(40, 1, 1);
-//			SetMotorDutyCycle(40, 0, 1);
-//		}
-//		else if(fovPtr[9]==0){
-//			SetServoDutyCycle(6.5);
-//			SetMotorDutyCycle(40, 1, 1);
-//			SetMotorDutyCycle(40, 0, 1);
-//		}
-//		else{
-//			SetServoDutyCycle(7.85);
-//			SetMotorDutyCycle(40, 1, 0);
-//			SetMotorDutyCycle(40, 0, 0);
-//		}
 	}
 
 	return 0;

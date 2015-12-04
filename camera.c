@@ -64,16 +64,19 @@ char str[10];
 uint16_t ADC0VAL;
 // Sections is an abreviated version of "link"
 uint16_t sections[15];
+int bLine[2];
+int derivative[13];
 
 // This function gets the position and splits it up
-// into 5 sections.
+// into 15 sections.
 
 //	|FarLeft|left|center|right|farRight|
-uint16_t * getPos(void){
-	int i,counter,index;
+int * getPos(void){
+	int i,counter,index,slope,min,max;
 	// Initialize
 	for(i=0;i<=14;i++){
 		sections[i] = 0;
+		derivative[i] = 0;
 	}
 	
 	counter = 1;
@@ -91,55 +94,78 @@ uint16_t * getPos(void){
 		}
 		
 	}
-	
 	//divide by # of elements
 	for(i=0;i<=14;i++){
 		sections[i] /= 5;
-		if(sections[i] >= 32768){
-			sections[i] = 1;
-		}
-		else{
-			sections[i] = 0;
-		}
 	}
 	
+	
+	min = 7;
+	max = 9;
+	for(i=1;i<=13;i++){
+		slope = sections[i+1] - sections[i-1];
+		derivative[i] = slope;
+		//sprintf(str, "%i ", slope);
+		//put(str);
+		if(slope < derivative[min]) {
+			min = i;
+		}
+		if(slope > derivative[max]) {
+			max = i;
+		}
+		
+	}
+	//sprintf(str, "\r\n");
+	//put(str);
+	sprintf(str,"%i || %i\r\n", min,max);
+	put(str);
+	//min
+	bLine[0] = min;
+	bLine[1] = max;
 	//Return a 5 element array with "average" values
-	return &sections[0];
+	return &bLine[0];
 }
 
 void driveCar(void){
-	uint16_t *fovPos;
-	int i, turned;
+	int *fovPos;
+	int i, turned, bLine, offset;
 	double dir;
 	SetMotorDutyCycle(40, 1, 1);
 	SetMotorDutyCycle(40, 0, 1);
-	fovPos = getPos(); //7 is the center
-	turned = 0;
-	if(fovPos[7]==0){
-		SetServoDutyCycle(7.85);
-	}
-	else{
-		for(i = 1; i<=7; i++){
-			if(fovPos[7+i]==0){
-				dir = 7.853 + 0.236*i;
-				SetServoDutyCycle(dir);
-				turned = 1;
-				break;
-			}
-			else if(fovPos[7-i]==0){
-				dir = 7.853 - 0.229*i;
-				SetServoDutyCycle(dir);
-				turned = 1;
-				break;
-			}
-			else{
-				continue;
-			}
-		}
-		if(turned == 0){
-			SetServoDutyCycle(7.853);
-		}
-	}
+	fovPos = getPos(); // [0] left index, [1] right index (indexs are from 0 to 14);
+	
+	bLine = (fovPos[1]-fovPos[0])/2;
+	offset = bLine - 8;
+	SetServoDutyCycle(7.853 + 0.229*(offset));
+	
+	//sprintf(str,"%i || %i \r\n",fovPos[0],fovPos[1]);
+	//put(str);
+//	turned = 0;
+//	if(fovPos[7]==0){
+//		SetServoDutyCycle(7.85);
+//	}
+//	else{
+//		for(i = 1; i<=7; i++){
+//			if(fovPos[7+i]==0){
+//				dir = 7.853 + 0.236*i;
+//				SetServoDutyCycle(dir);
+//				turned = 1;
+//				break;
+//			}
+//			else if(fovPos[7-i]==0){
+//				dir = 7.853 - 0.229*i;
+//				SetServoDutyCycle(dir);
+//				turned = 1;
+//				break;
+//			}
+//			else{
+//				continue;
+//			}
+//		}
+//		if(turned == 0){
+//			SetServoDutyCycle(7.853);
+//		}
+//	}
 	
 }
 

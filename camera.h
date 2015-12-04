@@ -9,7 +9,7 @@ void FTM2_IRQHandler(void);
 void PIT1_IRQHandler(void);
 void ADC0_IRQHandler(void);
 void init_camera(void);
-uint16_t * getPos(void);
+int * getPos(void);
 void driveCar(void);
 
 #endif /* CAMERA_H_ */
