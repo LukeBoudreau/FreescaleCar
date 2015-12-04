@@ -63,48 +63,34 @@ char str[10];
 // ADC0VAL holds the current ADC value
 uint16_t ADC0VAL;
 // Sections is an abreviated version of "link"
-uint16_t sections[15];
+double smoothLine[128];
 int bLine[2];
-int derivative[13];
+double derivative[128];
 
 // This function gets the position and splits it up
 // into 15 sections.
 
 //	|FarLeft|left|center|right|farRight|
 int * getPos(void){
-	int i,counter,index,slope,min,max;
+	int i,slope,min,max;
 	// Initialize
-	for(i=0;i<=14;i++){
-		sections[i] = 0;
-		derivative[i] = 0;
-	}
-	
-	counter = 1;
-	index = 0;
-	//Add up values
-	for(i=24;i<=99;i++){
-		if(counter == 5){
-			sections[index] += line[i];
-			counter = 1;
-			index++;
-			
+	// Smooth out the line, and initialize the derivative
+	for(i=0;i<=128;i++){
+		if( i < 2 || i > 126){
+			smoothLine[i] = 0.0;
 		} else {
-			sections[index] += line[i];
-			counter++;
+			smoothLine[i] = 0.05*(double)line[i-2] + 0.2*(double)line[i-1] + 
+				0.5*(double)line[i] + 0.2*(double)line[i+1] + 0.05*(double)line[i+2];
 		}
-		
-	}
-	//divide by # of elements
-	for(i=0;i<=14;i++){
-		sections[i] /= 5;
+		//always initialize derivative
+		derivative[i] = 0.0;
 	}
 	
-	
-	min = 7;
-	max = 9;
-	for(i=1;i<=13;i++){
-		slope = sections[i+1] - sections[i-1];
-		derivative[i] = slope;
+	min = 126;
+	max = 0;
+	for(i=1;i<=126;i++){
+		slope = smoothLine[i+1] - smoothLine[i-1];
+		derivative[i] = (double)slope;
 		//sprintf(str, "%i ", slope);
 		//put(str);
 		if(slope < derivative[min]) {
@@ -119,7 +105,7 @@ int * getPos(void){
 	//put(str);
 	//sprintf(str,"%i || %i\r\n", min,max);
 	//put(str);
-	//min
+	
 	bLine[0] = min;
 	bLine[1] = max;
 	return &bLine[0];

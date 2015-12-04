@@ -25,12 +25,15 @@ void driveCar(void){
 	int *fovPos;
 	int bLine;
 	double duty;
+	//Set DC motors
 	SetMotorDutyCycle(40, 1, 1);
 	SetMotorDutyCycle(40, 0, 1);
 	fovPos = getPos(); // [0] left index, [1] right index (indexs are from 0 to 14);
 	
 	bLine = (fovPos[1]+fovPos[0])/2;
-	duty = 6.25 + 0.3026*(bLine - 2);
+	bLine = bLine - 33;
+	duty = 6.25 + 0.05343333333333*bLine;
+	
 	if( duty < 6.25 ){
 		duty = 6.25;
 	} else if( duty > 9.5) {
