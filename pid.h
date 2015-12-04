@@ -3,5 +3,6 @@
 
 void PID_LOOP (void);
 double getError(void);
+void driveCar(void);
 
 #endif /* PID_H_ */

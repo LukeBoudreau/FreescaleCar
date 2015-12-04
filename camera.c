@@ -117,56 +117,12 @@ int * getPos(void){
 	}
 	//sprintf(str, "\r\n");
 	//put(str);
-	sprintf(str,"%i || %i\r\n", min,max);
-	put(str);
+	//sprintf(str,"%i || %i\r\n", min,max);
+	//put(str);
 	//min
 	bLine[0] = min;
 	bLine[1] = max;
-	//Return a 5 element array with "average" values
 	return &bLine[0];
-}
-
-void driveCar(void){
-	int *fovPos;
-	int i, turned, bLine, offset;
-	double dir;
-	SetMotorDutyCycle(40, 1, 1);
-	SetMotorDutyCycle(40, 0, 1);
-	fovPos = getPos(); // [0] left index, [1] right index (indexs are from 0 to 14);
-	
-	bLine = (fovPos[1]-fovPos[0])/2;
-	offset = bLine - 8;
-	SetServoDutyCycle(7.853 + 0.229*(offset));
-	
-	//sprintf(str,"%i || %i \r\n",fovPos[0],fovPos[1]);
-	//put(str);
-//	turned = 0;
-//	if(fovPos[7]==0){
-//		SetServoDutyCycle(7.85);
-//	}
-//	else{
-//		for(i = 1; i<=7; i++){
-//			if(fovPos[7+i]==0){
-//				dir = 7.853 + 0.236*i;
-//				SetServoDutyCycle(dir);
-//				turned = 1;
-//				break;
-//			}
-//			else if(fovPos[7-i]==0){
-//				dir = 7.853 - 0.229*i;
-//				SetServoDutyCycle(dir);
-//				turned = 1;
-//				break;
-//			}
-//			else{
-//				continue;
-//			}
-//		}
-//		if(turned == 0){
-//			SetServoDutyCycle(7.853);
-//		}
-//	}
-	
 }
 
 void init_camera(void)

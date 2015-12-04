@@ -11,17 +11,14 @@
 #include "uart.h"
 #include "PWM.h"
 #include "camera.h"
-#include "PID.h"
+#include "pid.h"
 
 void initialize(void);
 
 int main(void)
 {
-	uint16_t *fovPtr;
-	//int i;
-	// Initialize UART and PWM
+	// Initialize UART, PWM, Camera
 	initialize();
-
 	// Print welcome over serial
 	put("Running... \n\r");
 	
@@ -30,14 +27,12 @@ int main(void)
 	//SetMotorDutyCycle(50, 0, 1);
 	//SetServoDutyCycle(7.85);
 
-	//PID_LOOP();
-
-
+	//main loop();
 	for(;;){
 		driveCar();
 	}
 
-	return 0;
+	//return 0;	//unnecessary
 }
 
 void initialize()
