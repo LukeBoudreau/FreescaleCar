@@ -19,8 +19,7 @@ int main(void)
 {
 	// Initialize UART, PWM, Camera
 	initialize();
-	// Print welcome over serial
-	put("Running... \n\r");
+
 	
 	//Generate 20% duty cycle at 10kHz
 	//SetMotorDutyCycle(50, 1, 1);
@@ -28,8 +27,20 @@ int main(void)
 	//SetServoDutyCycle(7.85);
 
 	//main loop();
+	put("Waiting... \n\r");
+//	while( 1 ) {
+//		put("Entered loop \n\r");
+//		if( (GPIOC_PDIR&(1<<6)) == 0 ){
+//			break;
+//		}
+//		
+//	}
+	
+		// Print welcome over serial
+	put("Running... \n\r");
+	
 	for(;;){
-		driveCar();
+			driveCar();
 	}
 
 	//return 0;	//unnecessary
@@ -37,6 +48,17 @@ int main(void)
 
 void initialize()
 {
+		// Button start enabled
+	// Enable clock for Port C PTC6 button
+	SIM_SCGC5 |= SIM_SCGC5_PORTC_MASK; 
+	
+	// Configure the Mux for the button
+	PORTC_PCR6 = PORT_PCR_MUX(1);
+	GPIOC_PDDR &= ~(1<<6);
+
+	// Set the push button as an input
+	
+	
 	// Initialize UART
 	uart_init();	
 	
@@ -45,4 +67,6 @@ void initialize()
 	
 	//everything else
 	init_camera();
+	
+
 }

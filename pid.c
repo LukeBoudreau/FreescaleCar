@@ -12,6 +12,7 @@
  #include "camera.h"
  #include "pwm.h"
  #include "uart.h"
+ #include "stdio.h"
  //#define KP 0.45
  //#define KI 0.15
  //#define KD 0.20
@@ -24,15 +25,22 @@ void drivCar(void);
 void driveCar(void){
 	int *fovPos;
 	int bLine;
-	double duty;
+	double duty, speed;
+	char str[20];
 	//Set DC motors
-	SetMotorDutyCycle(40, 1, 1);
-	SetMotorDutyCycle(40, 0, 1);
+	SetMotorDutyCycle(38, 1, 1);
+	SetMotorDutyCycle(38, 0, 1);
 	fovPos = getPos(); // [0] left index, [1] right index (indexs are from 0 to 14);
 	
 	bLine = (fovPos[1]+fovPos[0])/2;
 	bLine = bLine - 33;
 	duty = 6.25 + 0.05343333333333*bLine;
+	
+//	if(bLine > 30){
+//		speed = 60 - (1.0/3)*bLine;
+//	} else {
+//		speed = 40 + (1.0/3)*bLine;
+//	}
 	
 	if( duty < 6.25 ){
 		duty = 6.25;
@@ -41,6 +49,11 @@ void driveCar(void){
 	}
 	
 	SetServoDutyCycle(duty);
+//	SetMotorDutyCycle(speed, 1, 1);
+//	SetMotorDutyCycle(speed, 0, 1);
+	
+	//sprintf(str, "%lf\r\n", speed);
+	//put(str);
 	//sprintf(str,"|%i|\r\n", bLine);
 	//put(str);
 	
