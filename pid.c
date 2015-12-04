@@ -13,51 +13,48 @@
  #include "pwm.h"
  #include "uart.h"
  #include "stdio.h"
- //#define KP 0.45
- //#define KI 0.15
- //#define KD 0.20
- //#define xCentered 0.0;
+ //#define KP 0.05343333333333
+ //#define KI 0.0
+ //#define KD 0.0
+ #define xCentered 0.0;
  
 void PID_LOOP(void);
 double getError(void);
 void drivCar(void);
  
+
 void driveCar(void){
 	int *fovPos;
 	int bLine;
-	double duty, speed;
+	double duty;
 	char str[20];
-	//Set DC motors
-	SetMotorDutyCycle(38, 1, 1);
-	SetMotorDutyCycle(38, 0, 1);
+
 	fovPos = getPos(); // [0] left index, [1] right index (indexs are from 0 to 14);
 	
 	bLine = (fovPos[1]+fovPos[0])/2;
 	bLine = bLine - 33;
+	sprintf(str, "%i\r\n", bLine);
+	put(str);
 	duty = 6.25 + 0.05343333333333*bLine;
-	
-//	if(bLine > 30){
-//		speed = 60 - (1.0/3)*bLine;
-//	} else {
-//		speed = 40 + (1.0/3)*bLine;
-//	}
 	
 	if( duty < 6.25 ){
 		duty = 6.25;
+		SetMotorDutyCycle(18, 1, 1);
+		SetMotorDutyCycle(58, 0, 1);
 	} else if( duty > 9.5) {
 		duty = 9.5;
+		SetMotorDutyCycle(18, 1, 1);
+		SetMotorDutyCycle(58, 0, 1);
+	} else {
+		//Set DC motors
+		SetMotorDutyCycle(38, 1, 1);	//left motor
+		SetMotorDutyCycle(38, 0, 1);	//right motor
 	}
 	
 	SetServoDutyCycle(duty);
-//	SetMotorDutyCycle(speed, 1, 1);
-//	SetMotorDutyCycle(speed, 0, 1);
-	
-	//sprintf(str, "%lf\r\n", speed);
-	//put(str);
-	//sprintf(str,"|%i|\r\n", bLine);
-	//put(str);
 	
 }
+
 
 /*
 void PID_LOOP(void) {
@@ -80,7 +77,14 @@ void PID_LOOP(void) {
 											ki*(xError-errOld) +
 											kd*(xError-2*errOld+errOld2);
 		 
-		 //ServoDutyCycle = clip(ServoDutyCycle,-40,40);
+		 if( ServoDutyCycle < 6.25 ){
+			 ServoDutyCycle = 6.25;
+		 } else if( ServoDutyCycle > 9.5) {
+			 ServoDutyCycle = 9.5;
+		 } else {
+			 SetMotorDutyCycle(42, 1, 1);	//left motor
+			 SetMotorDutyCycle(42, 0, 1);	//right motor
+		 }
 		 ServoDutyCycleOld = ServoDutyCycle;
 		 
 		 errOld2 = errOld;
@@ -88,17 +92,26 @@ void PID_LOOP(void) {
 	 }
 	 
 }
-*/
+
 
 // This function gets the five sections form the camera.
 // and calculates the largest error of the five sections,
 // and returns a the most incorrect value.
 // 
-/*
+
  double getError(void){
-	 double xError,xActual;
-	 //xActual = getPos();
-	 //xError = xCentered - xActual; //Abstract of what we want to do
+	 int bLine;
+	 int *fovPos;
+	 double xError;
+
+	 fovPos = getPos();
+	 bLine = (fovPos[1]+fovPos[0])/2;
+	 bLine = bLine - 33;
+	 
+	 xError = (30 - bLine)/100.0;
+	 if( xError < 0.0 ){
+		 xError = xError*-1.0;
+	 }
 	 
 	 return xError;
 }
