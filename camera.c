@@ -13,13 +13,13 @@
  *	generate the camera signals and read the camera 
  *  output.
  *
- *	PTB9			- camera CLK
+ *	PTB9		- camera CLK
  *	PTB23 		- camera SI
  *  ADC0_DP1 	- camera AOut
  *
- * Author:  Alex Avery
+ * Author:  Zack Teasdale and Luke Boudreau
  * Created:  11/20/15
- * Modified:  11/23/15
+ * Modified:  12/3/15
  */
 
 #include "MK64F12.h"
@@ -91,8 +91,6 @@ int * getPos(void){
 	for(i=1;i<=126;i++){
 		slope = smoothLine[i+1] - smoothLine[i-1];
 		derivative[i] = (double)slope;
-		//sprintf(str, "%i ", slope);
-		//put(str);
 		if(slope < derivative[min]) {
 			min = i;
 		}
@@ -101,10 +99,6 @@ int * getPos(void){
 		}
 		
 	}
-	//sprintf(str, "\r\n");
-	//put(str);
-	//sprintf(str,"%i || %i\r\n", min,max);
-	//put(str);
 	
 	bLine[0] = min;
 	bLine[1] = max;
@@ -113,38 +107,12 @@ int * getPos(void){
 
 void init_camera(void)
 {
-	//int i;
 	
 	uart_init();
 	init_GPIO(); // For CLK and SI output on GPIO
 	init_FTM2(); // To generate CLK, SI, and trigger ADC
 	init_ADC0();
 	init_PIT();	// To trigger camera read based on integration time
-	
-	
-//	for(;;) {
-
-//		if (debugcamdata) {
-//			// Every 2 seconds
-//			//if (capcnt >= (2/INTEGRATION_TIME)) {
-//			if (capcnt >= (200)) {
-//				GPIOB_PCOR |= (1 << 22);
-//				// send the array over uart
-//				sprintf(str,"%i\n\r",-1);
-//				put(str);
-//				for (i = 0; i < 127; i++) {
-//					sprintf(str,"%i\n", line[i]);
-//					put(str);
-//				}
-//				sprintf(str,"%i\n\r",-2);
-//				put(str);
-//				capcnt = 0;
-//				GPIOB_PSOR |= (1 << 22);
-//			}
-//		}
-
-//		
-//	} //for
 	
 } //main
 
@@ -260,8 +228,6 @@ void init_FTM2(){
 void init_PIT(void){
 	// Setup periodic interrupt timer (PIT)
 	SIM_SCGC6 |= SIM_SCGC6_PIT_MASK;
-	// Enable clock for timers
-	//PIT_MCR &= ~(PIT_MCR_MDIS_MASK); // I don't think we need this
 	// Enable timers to continue in debug mode
 	PIT_MCR = PIT_MCR_FRZ_MASK; // In case you need to debug
 	// PIT clock frequency is the system clock
@@ -317,14 +283,14 @@ void init_ADC0(void) {
     // Select hardware trigger.
     ADC0_SC2 |= ADC_SC2_ADTRG_MASK;
     // Set to single ended mode
-		//ADC0_SC1A &= ~(ADC_SC1_DIFF_MASK); 
-		// Enable interrupts, Select channel DADP3 (pin labeled ADC0_DP1)
-		//ADC0_SC1A |= ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(0x1);  
-		ADC0_SC1A = (0x41); // I don't know why the previous line doesn't work ^
-		// Set up FTM2 trigger on ADC0
-		SIM_SOPT7 |= SIM_SOPT7_ADC0TRGSEL(0xA); // FTM2 select
-		SIM_SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK; // Alternative trigger en.
-		SIM_SOPT7 &= ~(SIM_SOPT7_ADC0PRETRGSEL_MASK); // Pretrigger A
-		// Enable NVIC interrupt
+	//ADC0_SC1A &= ~(ADC_SC1_DIFF_MASK); 
+	// Enable interrupts, Select channel DADP3 (pin labeled ADC0_DP1)
+	//ADC0_SC1A |= ADC_SC1_AIEN_MASK | ADC_SC1_ADCH(0x1);  
+	ADC0_SC1A = (0x41); // I don't know why the previous line doesn't work ^
+	// Set up FTM2 trigger on ADC0
+	SIM_SOPT7 |= SIM_SOPT7_ADC0TRGSEL(0xA); // FTM2 select
+	SIM_SOPT7 |= SIM_SOPT7_ADC0ALTTRGEN_MASK; // Alternative trigger en.
+	SIM_SOPT7 &= ~(SIM_SOPT7_ADC0PRETRGSEL_MASK); // Pretrigger A
+	// Enable NVIC interrupt
     NVIC_EnableIRQ(ADC0_IRQn);
 }

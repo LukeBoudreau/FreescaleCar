@@ -2,10 +2,10 @@
  * Pulse-Width-Modulation Code for K64
  * PWM signal can be connected to output pins PC3 and PC4
  * 
- * Author: Brent Dimmig <bnd8678@rit.edu>
+ * Author: Zack Teasdale and Luke Boudreau
  * Modified by: 
- * Created: 2/20/2014
- * Modified: 3/07/2015
+ * Created: 11/20/2015
+ * Modified: 12/3/2015
  */
 #include "MK64F12.h"
 #include "pwm.h"
@@ -93,9 +93,9 @@ void InitPWM(void)
 	//These port/pins may need to be updated for the K64 <Yes, they do. Here are two that work.>
     PORTC_PCR3  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch2
     PORTC_PCR4  = PORT_PCR_MUX(4)  | PORT_PCR_DSE_MASK; //FTM0 Ch3
-	  PORTA_PCR2  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch7
-	  PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch6
-		PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM3 Ch4
+	PORTA_PCR2  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch7
+	PORTA_PCR1  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM0 Ch6
+	PORTC_PCR8  = PORT_PCR_MUX(3)  | PORT_PCR_DSE_MASK; //FTM3 Ch4
 	
 	// 39.3.10 Disable Write Protection
 	FTM0_MODE |= FTM_MODE_WPDIS_MASK;
